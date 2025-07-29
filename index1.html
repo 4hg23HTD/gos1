@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Цифровой доход</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <div id="screen1">
+    <h1>💼 Цифровой доход</h1>
+    <button onclick="nextScreen(2)">Узнать мои варианты</button>
+  </div>
+
+  <div id="screen2" style="display:none">
+    <button onclick="selectStatus('Самозанятый')">Самозанятый</button>
+    <button onclick="selectStatus('Студент')">Студент</button>
+  </div>
+
+  <div id="screen3" style="display:none">
+    <input id="income" placeholder="Введите доход" />
+    <button onclick="nextScreen(4)">Продолжить</button>
+  </div>
+
+  <div id="screen4" style="display:none">
+    <p id="confirmation"></p>
+    <button onclick="nextScreen(5)">Подтвердить</button>
+  </div>
+
+  <div id="screen5" style="display:none">
+    <h1>Спасибо!</h1>
+  </div>
+
+  <script>
+    let userStatus = '';
+    let incomeValue = '';
+
+    function nextScreen(n) {
+      for (let i = 1; i <= 5; i++) {
+        document.getElementById("screen" + i).style.display = "none";
+      }
+      document.getElementById("screen" + n).style.display = "block";
+
+      if (n === 4) {
+        incomeValue = document.getElementById("income").value.replace(/\D/g, '');
+        document.getElementById("confirmation").textContent =
+          `Вы выбрали: ${userStatus}, доход: ${incomeValue} ₽/мес`;
+      }
+
+      if (n === 5) {
+        if (window.Telegram && window.Telegram.WebApp) {
+          Telegram.WebApp.sendData(JSON.stringify({
+            status: userStatus,
+            income: incomeValue
+          }));
+        }
+      }
+    }
+
+    function selectStatus(status) {
+      userStatus = status;
+      nextScreen(3);
+    }
+  </script>
+</body>
+</html>
